@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Privado — Patitas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f2f7f5; color: #12322d; margin: 0; padding: 2rem; }
+    .box { max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    button { padding: 0.6rem 1.2rem; background: #1f8a70; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div id="denied" class="box">
+    <h2>Acceso restringido</h2>
+    <p>Inicia sesión con tu cuenta de Supabase para acceder al panel.</p>
+    <button onclick="window.location.href='/login'">Ir a iniciar sesión</button>
+  </div>
+  <div id="privatePanel" class="box" style="display:none;">
+    <h1>🐾 Panel Administrativo — Patitas</h1>
+    <p id="userEmail"></p>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
+  <script>
+    const supabaseClient = supabase.createClient(
+      'https://hvqgxfimhymsqfwpnysm.supabase.co',
+      'PEGA_AQUI_TU_CLAVE_PUBLICA'
+    );
+
+    async function checkSession() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        document.getElementById('denied').style.display = 'none';
+        document.getElementById('privatePanel').style.display = 'block';
+        document.getElementById('userEmail').textContent = 'Conectado como: ' + session.user.email;
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = '/login';
+    });
+
+    checkSession();
+  </script>
+</body>
+</html>
