@@ -1,0 +1,15 @@
+{
+  "name": "Patitas: cuidado de mascotas",
+  "short_name": "Patitas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f2f7f5",
+  "theme_color": "#1f8a70",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
