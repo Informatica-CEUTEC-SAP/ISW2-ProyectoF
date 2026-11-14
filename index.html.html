@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Patitas: cuidado de mascotas</title>
+<style>
+:root{--bg:#f2f7f5;--card:#fff;--ink:#12322d;--mut:#55706a;--ac:#1f8a70;--acs:#d9f0e8;--hi:#ffc857;--bd:#d3e2dd;--bad:#b3402f;--warn:#8a5a00;--ok:#1a7560;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1f1c;--card:#16302b;--ink:#e6f3ef;--mut:#9bb8b0;--ac:#4cc4a2;--acs:#1d4038;--bd:#264a42;--bad:#ff8a77;--warn:#ffc857;--ok:#4cc4a2}}
+:root[data-theme="dark"]{--bg:#0e1f1c;--card:#16302b;--ink:#e6f3ef;--mut:#9bb8b0;--ac:#4cc4a2;--acs:#1d4038;--bd:#264a42;--bad:#ff8a77;--warn:#ffc857;--ok:#4cc4a2}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Trebuchet MS","Segoe UI",Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0 0 .5rem}
+h1{font-size:clamp(1.9rem,5vw,2.9rem)}h2{font-size:1.45rem}h3{font-size:1.1rem}
+p{margin:.2rem 0 .8rem;max-width:62ch}
+header{background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.bar{max-width:1040px;margin:auto;padding:.6rem 1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.logo{font-family:Georgia,serif;font-weight:700;font-size:1.3rem}
+nav{display:flex;gap:.25rem;flex-wrap:wrap}
+nav button{background:none;border:0;color:var(--mut);padding:.45rem .8rem;border-radius:99px;font:inherit;cursor:pointer}
+nav button[aria-current="page"]{background:var(--acs);color:var(--ink);font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+main{max-width:1040px;margin:auto;padding:1.2rem 1rem 4rem}
+.hero{display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:center;background:var(--acs);border-radius:28px;padding:1.6rem;margin-bottom:1.4rem}
+.tag{width:170px;height:170px;border-radius:50%;background:var(--hi);color:#2a2000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:1rem;border:6px solid #2a2000}
+.tag::before{content:"";position:absolute;top:10px;width:14px;height:14px;border-radius:50%;background:var(--acs);border:3px solid #2a2000}
+.tag b{font:700 1.4rem Georgia,serif}.tag small{font-size:.8rem}.tag span{font-size:.85rem}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:12px;padding:.65rem 1.1rem;font:inherit;font-weight:700;cursor:pointer}
+:root[data-theme="dark"] .btn{color:#06201a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#06201a}}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--bd)}
+.btn.sm{padding:.3rem .7rem;font-size:.9rem;border-radius:9px}
+.btn.danger{background:transparent;color:var(--bad);border:1.5px solid var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:1rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 0;border-bottom:1px solid var(--bd)}
+.row:last-child{border-bottom:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.big{font-size:2.6rem}
+.chip{display:inline-block;padding:.1rem .6rem;border-radius:99px;font-size:.82rem;font-weight:700;border:1.5px solid currentColor}
+.chip.ok{color:var(--ok)}.chip.warn{color:var(--warn)}.chip.bad{color:var(--bad)}.chip.mut{color:var(--mut)}
+.mut{color:var(--mut)}
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;align-items:end;margin-bottom:1.2rem}
+label{display:flex;flex-direction:column;font-size:.88rem;gap:.2rem;color:var(--mut)}
+input,select{font:inherit;padding:.5rem .6rem;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);min-width:0}
+.err{color:var(--bad);font-weight:700;min-height:1.4rem;margin:0 0 .6rem}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px}
+th,td{text-align:left;padding:.55rem .5rem;border-bottom:1px solid var(--bd)}
+th{font-size:.85rem;color:var(--mut)}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.chips button{border:1.5px solid var(--bd);background:var(--card);color:var(--ink);border-radius:99px;padding:.3rem .8rem;font:inherit;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ac);border-color:var(--ac);color:#fff}
+#toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;max-width:90vw}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.sw{display:flex;align-items:center;gap:.5rem}
+@media (max-width:640px){.hero,.two{grid-template-columns:1fr}.tag{width:140px;height:140px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body>
+<header><div class="bar"><span class="logo">🐾 Patitas</span><nav id="nav" aria-label="Secciones"></nav></div></header>
+<main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const iso=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const fmt=s=>new Date(s+'T12:00').toLocaleDateString('es-HN',{day:'numeric',month:'short',year:'numeric'});
+const days=s=>Math.round((new Date(s+'T12:00')-new Date(iso(0)+'T12:00'))/864e5);
+let uid=100;
+const S={view:'inicio',vsel:1,q:'',spec:'Todas',tip:'Todas',pre:'',
+pets:[{id:1,name:'Luna',sp:'Perro',breed:'Labrador',age:4,kg:28,note:'Alérgica al pollo'},
+{id:2,name:'Milo',sp:'Gato',breed:'Siamés',age:2,kg:4.2,note:'Solo come alimento húmedo'},
+{id:3,name:'Copo',sp:'Conejo',breed:'Cabeza de león',age:1,kg:1.6,note:'Heno todo el día'}],
+vets:[{id:1,name:'Dra. Andrea Molina',spec:'Medicina general',clinic:'Clínica Huellas del Valle',tel:'2550-1001',for:'Perros y gatos'},
+{id:2,name:'Dr. Luis Cárcamo',spec:'Dermatología',clinic:'Centro Veterinario Alameda',tel:'2550-1002',for:'Perros y gatos'},
+{id:3,name:'Dra. Sofía Pineda',spec:'Animales exóticos',clinic:'Clínica Huellas del Valle',tel:'2550-1003',for:'Conejos y aves'},
+{id:4,name:'Dr. Marcos Reyes',spec:'Cirugía',clinic:'Hospital Vet Norte',tel:'2550-1004',for:'Perros y gatos'},
+{id:5,name:'Dra. Karla Ordóñez',spec:'Nutrición',clinic:'Centro Veterinario Alameda',tel:'2550-1005',for:'Todas las especies'}],
+appts:[{id:1,petId:1,vetId:1,date:iso(2),time:'10:00',reason:'Control anual',st:'Confirmada'},
+{id:2,petId:2,vetId:5,date:iso(9),time:'14:00',reason:'Plan de alimentación',st:'Confirmada'},
+{id:3,petId:3,vetId:3,date:iso(-20),time:'09:00',reason:'Revisión de dientes',st:'Completada'}],
+vacc:{1:[{n:'Rabia',d:iso(-340),next:iso(25)},{n:'Polivalente',d:iso(-200),next:iso(165)},{n:'Bordetella',d:iso(-400),next:iso(-35)}],
+2:[{n:'Triple felina',d:iso(-120),next:iso(245)},{n:'Rabia',d:iso(-350),next:iso(15)}],
+3:[{n:'Mixomatosis',d:iso(-100),next:iso(265)}]},
+rem:[{id:1,petId:1,text:'Pastilla antiparasitaria',when:'Primer día de cada mes',on:true},
+{id:2,petId:2,text:'Cepillado de pelo',when:'Sábados por la mañana',on:true},
+{id:3,petId:3,text:'Limpiar la jaula',when:'Domingos',on:false}],
+tips:[{t:'Hidratación en el calor',sp:'Perro',x:'Con temperaturas altas, ofrece agua fresca varias veces al día y evita pasear entre las 11:00 y las 15:00.'},
+{t:'Cepillado de dientes',sp:'Perro',x:'Cepillar tres veces por semana con pasta para perros reduce el sarro y el mal aliento.'},
+{t:'Señales de estrés en gatos',sp:'Gato',x:'Esconderse, dejar de comer o acicalarse en exceso puede indicar estrés. Consulta si dura más de dos días.'},
+{t:'Arenero limpio',sp:'Gato',x:'Retira los residuos a diario y cambia la arena completa cada semana.'},
+{t:'Heno primero',sp:'Conejo',x:'El heno debe ser la base de su dieta: mantiene sano el sistema digestivo y desgasta los dientes.'},
+{t:'Peso saludable',sp:'Todas',x:'Pesa a tu mascota una vez al mes. Un cambio brusco de peso merece una consulta.'},
+{t:'Plantas peligrosas',sp:'Todas',x:'Lirios, sagú y poto son tóxicos para muchas mascotas. Mantenlos fuera de su alcance.'}]};
+const E={Perro:'🐕',Gato:'🐈',Conejo:'🐇',Ave:'🦜'};
+const pet=i=>S.pets.find(p=>p.id==i),vet=i=>S.vets.find(v=>v.id==i);
+const chip=(t,c)=>`<span class="chip ${c}">${t}</span>`;
+const vs=v=>{const d=days(v.next);return d<0?['Vencida','bad']:d<=30?['Próxima','warn']:['Al día','ok']};
+const alerts=()=>{const a=[];S.pets.forEach(p=>(S.vacc[p.id]||[]).forEach(v=>{const s=vs(v);if(s[1]!='ok')a.push({p,v,s})}));return a};
+const upcoming=()=>S.appts.filter(a=>a.st=='Confirmada'&&days(a.date)>=0).sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
+const opts=(arr,sel,f)=>arr.map(x=>`<option value="${x.id}"${x.id==sel?' selected':''}>${esc(f(x))}</option>`).join('');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2600)}
+const NAV=[['inicio','Inicio'],['mascotas','Mascotas'],['citas','Citas'],['salud','Salud'],['directorio','Veterinarios'],['consejos','Consejos']];
+
+const V={
+inicio(){const nx=upcoming()[0],al=alerts(),d=nx?days(nx.date):0;
+return `<section class="hero"><div><h1>Todo el cuidado de tus mascotas en un solo lugar</h1><p>Citas, vacunas y recordatorios de ${S.pets.length} mascota${S.pets.length==1?'':'s'}, siempre al día.</p><button class="btn" data-go="citas">Agendar una cita</button></div>
+<div class="tag" aria-label="Próxima cita">${nx?`<small>Próxima cita</small><b>${d==0?'Hoy':d==1?'Mañana':'En '+d+' días'}</b><span>${esc(pet(nx.petId).name)}, ${nx.time}</span>`:'<b>Sin citas</b>'}</div></section>
+<div class="two"><div class="card"><h2>Vacunas que requieren atención</h2>${al.length?al.map(a=>`<div class="row"><span>${E[a.p.sp]||'🐾'} ${esc(a.p.name)}: ${esc(a.v.n)}<br><small class="mut">Vence el ${fmt(a.v.next)}</small></span>${chip(a.s[0],a.s[1])}</div>`).join(''):'<p class="mut">Todas las vacunas están al día.</p>'}<button class="btn ghost sm" data-go="salud">Ver salud</button></div>
+<div class="card"><h2>Recordatorios</h2>${S.rem.map(r=>`<div class="row"><span>${esc(r.text)}<br><small class="mut">${esc(pet(r.petId)?.name||'')}: ${esc(r.when)}</small></span><label class="sw"><input type="checkbox" data-act="rem" data-id="${r.id}"${r.on?' checked':''} aria-label="Activar ${esc(r.text)}"></label></div>`).join('')}</div></div>`},
+
+mascotas(){return `<h2>Mis mascotas</h2><div class="card" style="margin-bottom:1.2rem"><h3>Agregar mascota</h3><div class="f">
+<label>Nombre<input id="pn" maxlength="30"></label><label>Especie<select id="ps"><option>Perro</option><option>Gato</option><option>Conejo</option><option>Ave</option></select></label>
+<label>Raza<input id="pb" maxlength="30"></label><label>Edad (años)<input id="pa" type="number" min="0" max="30" step="0.5"></label><label>Peso (kg)<input id="pk" type="number" min="0.1" step="0.1"></label>
+<button class="btn" data-act="addpet">Guardar mascota</button></div><p class="err" id="e1"></p></div>
+<div class="grid">${S.pets.length?S.pets.map(p=>`<article class="card"><div class="big">${E[p.sp]||'🐾'}</div><h3>${esc(p.name)}</h3><p class="mut">${esc(p.sp)}, ${esc(p.breed||'Sin raza')}<br>${p.age} años, ${p.kg} kg</p>${p.note?`<p>${esc(p.note)}</p>`:''}
+<button class="btn sm" data-act="ver" data-id="${p.id}">Ver salud</button> <button class="btn danger sm" data-act="delpet" data-id="${p.id}">Eliminar</button></article>`).join(''):'<p class="mut">Aún no tienes mascotas. Agrega la primera con el formulario.</p>'}</div>`},
+
+citas(){const t=['09:00','10:00','11:00','13:00','14:00','15:00','16:00'];
+const list=[...S.appts].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+return `<h2>Citas</h2><div class="card" style="margin-bottom:1.2rem"><h3>Agendar cita</h3><div class="f">
+<label>Mascota<select id="cp">${opts(S.pets,0,p=>p.name)}</select></label><label>Veterinario<select id="cv">${opts(S.vets,S.pre,v=>v.name+', '+v.spec)}</select></label>
+<label>Fecha<input id="cd" type="date" min="${iso(0)}" value="${iso(1)}"></label><label>Hora<select id="ct">${t.map(h=>`<option>${h}</option>`).join('')}</select></label>
+<label>Motivo<input id="cr" maxlength="60" placeholder="Ej. vacuna anual"></label><button class="btn" data-act="addcita">Confirmar cita</button></div><p class="err" id="e2"></p></div>
+<div class="card">${list.length?list.map(a=>`<div class="row"><span><b>${esc(pet(a.petId)?.name||'Mascota eliminada')}</b>, ${esc(a.reason)}<br><small class="mut">${fmt(a.date)} a las ${a.time} con ${esc(vet(a.vetId).name)}</small></span><span>${chip(a.st,a.st=='Confirmada'?'ok':a.st=='Cancelada'?'bad':'mut')} ${a.st=='Confirmada'?`<button class="btn danger sm" data-act="cancel" data-id="${a.id}">Cancelar</button>`:''}</span></div>`).join(''):'<p class="mut">No hay citas. Agenda la primera arriba.</p>'}</div>`},
+
+salud(){const p=pet(S.vsel)||S.pets[0];if(!p)return '<h2>Salud</h2><p class="mut">Agrega una mascota para ver su carné de vacunas.</p>';
+const L=S.vacc[p.id]||[];
+return `<h2>Carné de salud</h2><div class="chips" role="group" aria-label="Mascota">${S.pets.map(x=>`<button data-act="ver" data-id="${x.id}" aria-pressed="${x.id==p.id}">${E[x.sp]||'🐾'} ${esc(x.name)}</button>`).join('')}</div>
+<div class="card"><h3>Vacunas de ${esc(p.name)}</h3><div class="scroll">${L.length?`<table><thead><tr><th>Vacuna</th><th>Última dosis</th><th>Próxima</th><th>Estado</th><th></th></tr></thead><tbody>${L.map((v,i)=>{const s=vs(v);return `<tr><td>${esc(v.n)}</td><td>${fmt(v.d)}</td><td>${fmt(v.next)}</td><td>${chip(s[0],s[1])}</td><td><button class="btn ghost sm" data-act="apply" data-i="${i}">Registrar aplicación</button></td></tr>`}).join('')}</tbody></table>`:'<p class="mut">Sin vacunas registradas.</p>'}</div>
+<div class="f" style="margin-top:1rem"><label>Nueva vacuna<select id="vn"><option>Rabia</option><option>Polivalente</option><option>Triple felina</option><option>Bordetella</option><option>Mixomatosis</option></select></label><button class="btn" data-act="addvac">Registrar hoy</button></div></div>`},
+
+directorio(){return `<h2>Veterinarios</h2><div class="f"><label>Buscar<input id="q" value="${esc(S.q)}" placeholder="Nombre o clínica"></label>
+<label>Especialidad<select id="sp"><option>Todas</option>${[...new Set(S.vets.map(v=>v.spec))].map(s=>`<option${s==S.spec?' selected':''}>${s}</option>`).join('')}</select></label></div><div class="grid" id="vlist">${V.vlist()}</div>`},
+vlist(){const q=S.q.toLowerCase(),r=S.vets.filter(v=>(S.spec=='Todas'||v.spec==S.spec)&&(v.name+v.clinic).toLowerCase().includes(q));
+return r.length?r.map(v=>`<article class="card"><h3>${esc(v.name)}</h3><p>${chip(esc(v.spec),'ok')}</p><p class="mut">${esc(v.clinic)}<br>Atiende: ${esc(v.for)}<br>Tel. ${esc(v.tel)}</p><button class="btn sm" data-act="book" data-id="${v.id}">Agendar con ${esc(v.name.split(' ')[0])}</button></article>`).join(''):'<p class="mut">No hay resultados. Prueba con otro nombre o especialidad.</p>'},
+
+consejos(){const s=['Todas','Perro','Gato','Conejo'];
+return `<h2>Consejos de cuidado</h2><div class="chips">${s.map(x=>`<button data-act="tip" data-v="${x}" aria-pressed="${x==S.tip}">${x}</button>`).join('')}</div><div class="grid">${S.tips.filter(t=>S.tip=='Todas'||t.sp==S.tip||t.sp=='Todas').map(t=>`<article class="card"><h3>${esc(t.t)}</h3><p>${esc(t.x)}</p>${chip(t.sp=='Todas'?'Todas las especies':t.sp,'mut')}</article>`).join('')}</div>`}
+};
+
+function render(){const v=V[S.view]?S.view:'inicio';S.view=v;
+$('#nav').innerHTML=NAV.map(([k,l])=>`<button data-go="${k}"${k==v?' aria-current="page"':''}>${l}</button>`).join('');
+$('#app').innerHTML=V[v]()}
+function go(v){S.view=v;if(location.hash!=='#'+v)location.hash=v;render();window.scrollTo(0,0)}
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(V[h]&&h!=S.view){S.view=h;render()}});
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go],[data-act]');if(!b)return;
+if(b.dataset.go)return go(b.dataset.go);
+const a=b.dataset.act,id=+b.dataset.id;
+if(a=='ver'){S.vsel=id;go('salud')}
+else if(a=='addpet'){const n=$('#pn').value.trim(),age=parseFloat($('#pa').value),kg=parseFloat($('#pk').value),er=$('#e1');
+if(!n)return er.textContent='Escribe el nombre de la mascota.';
+if(!(age>=0&&age<=30))return er.textContent='La edad debe estar entre 0 y 30 años.';
+if(!(kg>0))return er.textContent='El peso debe ser mayor que 0.';
+const p={id:++uid,name:n,sp:$('#ps').value,breed:$('#pb').value.trim(),age,kg,note:''};S.pets.push(p);S.vacc[p.id]=[];render();toast(p.name+' se agregó a tu lista')}
+else if(a=='delpet'){const p=pet(id);if(!confirm('¿Eliminar a '+p.name+'?'))return;S.pets=S.pets.filter(x=>x.id!=id);S.appts.forEach(x=>{if(x.petId==id&&x.st=='Confirmada')x.st='Cancelada'});S.rem=S.rem.filter(r=>r.petId!=id);if(S.vsel==id)S.vsel=S.pets[0]?.id;render();toast(p.name+' se eliminó')}
+else if(a=='addcita'){const er=$('#e2'),pid=+$('#cp').value,vid=+$('#cv').value,d=$('#cd').value,t=$('#ct').value,r=$('#cr').value.trim();
+if(!pid)return er.textContent='Primero agrega una mascota.';
+if(!d||days(d)<0)return er.textContent='Elige una fecha de hoy en adelante.';
+if(!r)return er.textContent='Escribe el motivo de la cita.';
+if(S.appts.some(x=>x.vetId==vid&&x.date==d&&x.time==t&&x.st=='Confirmada'))return er.textContent='Ese horario ya está ocupado. Elige otra hora.';
+S.appts.push({id:++uid,petId:pid,vetId:vid,date:d,time:t,reason:r,st:'Confirmada'});S.pre='';render();toast('Cita confirmada para el '+fmt(d))}
+else if(a=='cancel'){const x=S.appts.find(z=>z.id==id);x.st='Cancelada';render();toast('Cita cancelada')}
+else if(a=='apply'){const v=S.vacc[S.vsel][+b.dataset.i];v.d=iso(0);v.next=iso(365);render();toast(v.n+' registrada hoy')}
+else if(a=='addvac'){const n=$('#vn').value;S.vacc[S.vsel].push({n,d:iso(0),next:iso(365)});render();toast(n+' registrada')}
+else if(a=='book'){S.pre=id;go('citas')}
+else if(a=='tip'){S.tip=b.dataset.v;render()}});
+document.addEventListener('change',e=>{const t=e.target;
+if(t.dataset.act=='rem'){const r=S.rem.find(x=>x.id==+t.dataset.id);r.on=t.checked;toast(r.on?'Recordatorio activado':'Recordatorio desactivado')}
+if(t.id=='sp'){S.spec=t.value;$('#vlist').innerHTML=V.vlist()}});
+document.addEventListener('input',e=>{if(e.target.id=='q'){S.q=e.target.value;$('#vlist').innerHTML=V.vlist()}});
+{const h=location.hash.slice(1);if(V[h])S.view=h}
+render();
+</script></body></html>
