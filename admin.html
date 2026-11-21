@@ -6,35 +6,141 @@
   <title>Panel Privado — Patitas</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f2f7f5; color: #12322d; margin: 0; padding: 2rem; }
-    .box { max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-    button { padding: 0.6rem 1.2rem; background: #1f8a70; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f2f7f5; color: #12322d; margin: 0; padding: 1.5rem; }
+    .container { max-width: 720px; margin: 1rem auto; background: #fff; padding: 2rem; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
+    h1 { font-size: 1.4rem; margin: 0; color: #1f8a70; }
+    .user-badge { font-size: 0.85rem; color: #55706a; margin-top: 0.25rem; }
+    button { padding: 0.6rem 1.1rem; background: #1f8a70; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    button.secondary { background: #e2e8f0; color: #12322d; }
+    button.danger { background: #dc2626; padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }
+    input, select { padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f8fafc; color: #55706a; }
+    .empty { text-align: center; color: #55706a; padding: 1.5rem; }
   </style>
 </head>
 <body>
-  <div id="denied" class="box">
+  <div id="denied" class="container">
     <h2>Acceso restringido</h2>
-    <p>Inicia sesión con tu cuenta de Supabase para acceder al panel.</p>
+    <p>Inicia sesión con tu cuenta de Supabase para acceder al panel administrativo.</p>
     <button onclick="window.location.href='/login'">Ir a iniciar sesión</button>
   </div>
-  <div id="privatePanel" class="box" style="display:none;">
-    <h1>🐾 Panel Administrativo — Patitas</h1>
-    <p id="userEmail"></p>
-    <button id="logoutBtn">Cerrar sesión</button>
+
+  <div id="privatePanel" class="container" style="display:none;">
+    <div class="topbar">
+      <div>
+        <h1>🐾 Panel Administrativo — Patitas</h1>
+        <div id="userEmail" class="user-badge"></div>
+      </div>
+      <div>
+        <button class="secondary" onclick="window.location.href='/'">Ver sitio público</button>
+        <button id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <form id="petForm">
+      <input type="text" id="nombre" placeholder="Nombre de la mascota" required>
+      <select id="especie" required>
+        <option value="Perro">Perro</option>
+        <option value="Gato">Gato</option>
+        <option value="Ave">Ave</option>
+        <option value="Otro">Otro</option>
+      </select>
+      <input type="text" id="raza" placeholder="Raza (opcional)">
+      <input type="date" id="fecha_nacimiento" title="Fecha de nacimiento">
+      <button type="submit">+ Registrar mascota</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Especie</th>
+          <th>Raza</th>
+          <th>Nacimiento</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="petsTableBody">
+        <tr><td colspan="5" class="empty">Cargando mascotas...</td></tr>
+      </tbody>
+    </table>
   </div>
+
   <script>
     const supabaseClient = supabase.createClient(
       'https://hvqgxfimhymsqfwpnysm.supabase.co',
       'sb_publishable_9pz6We3N19ytazqNrNQeAg_TJcSkfAb'
     );
 
+    let currentUser = null;
+
+    function renderizarTablaMascotas(mascotas) {
+      const tbody = document.getElementById('petsTableBody');
+      if (!mascotas || mascotas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty">Aún no hay mascotas registradas. Agrega la primera arriba.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = mascotas.map(pet => `
+        <tr>
+          <td><strong>${pet.nombre}</strong></td>
+          <td>${pet.especie}</td>
+          <td>${pet.raza || '-'}</td>
+          <td>${pet.fecha_nacimiento || '-'}</td>
+          <td><button class="danger" onclick="deletePet('${pet.id}')">Eliminar</button></td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadPets() {
+      const { data, error } = await supabaseClient
+        .from('mascotas')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        document.getElementById('petsTableBody').innerHTML =
+          '<tr><td colspan="5" class="empty">Error al cargar: ' + error.message + '</td></tr>';
+        return;
+      }
+      renderizarTablaMascotas(data);
+    }
+
     async function checkSession() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
+        currentUser = session.user;
         document.getElementById('denied').style.display = 'none';
         document.getElementById('privatePanel').style.display = 'block';
-        document.getElementById('userEmail').textContent = 'Conectado como: ' + session.user.email;
+        document.getElementById('userEmail').textContent = 'Conectado como: ' + currentUser.email;
+        loadPets();
       }
+    }
+
+    document.getElementById('petForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const { error } = await supabaseClient.from('mascotas').insert([{
+        user_id: currentUser.id,
+        nombre: document.getElementById('nombre').value,
+        especie: document.getElementById('especie').value,
+        raza: document.getElementById('raza').value || null,
+        fecha_nacimiento: document.getElementById('fecha_nacimiento').value || null
+      }]);
+
+      if (error) {
+        alert('Error al guardar: ' + error.message);
+      } else {
+        e.target.reset();
+        loadPets();
+      }
+    });
+
+    async function deletePet(id) {
+      const { error } = await supabaseClient.from('mascotas').delete().eq('id', id);
+      if (!error) loadPets();
     }
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
